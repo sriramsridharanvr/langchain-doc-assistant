@@ -1,6 +1,7 @@
 import os
 
 from dotenv import load_dotenv
+
 load_dotenv()
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -10,8 +11,11 @@ from langchain_pinecone import PineconeVectorStore
 
 embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
+
 def ingest_docs():
-    loader = ReadTheDocsLoader("langchain-docs/api.python.langchain.com/en/latest", encoding="UTF-8")
+    loader = ReadTheDocsLoader(
+        "langchain-docs/api.python.langchain.com/en/latest", encoding="UTF-8"
+    )
     raw_documents = loader.load()
     print(f"Loaded {len(raw_documents)} documents")
 
@@ -19,7 +23,7 @@ def ingest_docs():
     documents = text_splitter.split_documents(raw_documents)
 
     for doc in documents:
-        new_url = doc.metadata['source']
+        new_url = doc.metadata["source"]
         new_url = new_url.replace("langchain-docs", "https:/")
         doc.metadata.update({"source": new_url})
 
@@ -30,6 +34,7 @@ def ingest_docs():
     )
 
     print("Loaded to vector store")
+
 
 if __name__ == "__main__":
     ingest_docs()
